@@ -11,8 +11,9 @@ export function EntryList() {
   useEffect(() => {
     async function load() {
       try {
-        const entries = await readEntries();
-        setEntries(entries);
+        const entries = await fetch(`/api/readAll/`);
+        const formattedEntries = await entries.json();
+        setEntries(formattedEntries);
       } catch (err) {
         setError(err);
       } finally {

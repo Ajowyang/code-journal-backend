@@ -28,10 +28,13 @@ export function EntryForm() {
     async function load(id: number) {
       setIsLoading(true);
       try {
-        const entry = await readEntry(id);
-        if (!entry) throw new Error(`Entry with ID ${id} not found`);
-        setEntry(entry);
-        setPhotoUrl(entry.photoUrl);
+        const entry = await fetch(`/api/readEntry/${id}`);
+        console.log(entry);
+        if (!entry.ok) throw new Error(`Entry with ID ${id} not found`);
+        const formattedEntry = (await entry.json()) as Entry;
+        console.log(formattedEntry);
+        setEntry(formattedEntry);
+        setPhotoUrl(formattedEntry.photoUrl);
       } catch (err) {
         setError(err);
       } finally {
