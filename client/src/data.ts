@@ -38,6 +38,9 @@ export async function addEntry(entry: Entry): Promise<Entry | void> {
   try {
     const req = {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(entry),
     };
     const response = await fetch('/api/create', req);
@@ -53,6 +56,9 @@ export async function updateEntry(entry: Entry): Promise<Entry | void> {
   try {
     const req = {
       method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(entry),
     };
     const response = await fetch(`/api/update/${entry.entryId}`, req);
