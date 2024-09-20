@@ -26,11 +26,6 @@ function readData(): Data {
   return data;
 }
 
-function writeData(data: Data): void {
-  const dataJSON = JSON.stringify(data);
-  localStorage.setItem(dataKey, dataJSON);
-}
-
 export async function readEntries(): Promise<Entry[]> {
   return readData().entries;
 }
@@ -39,32 +34,46 @@ export async function readEntry(entryId: number): Promise<Entry | undefined> {
   return readData().entries.find((e) => e.entryId === entryId);
 }
 
-export async function addEntry(entry: Entry): Promise<Entry> {
-  const data = readData();
-  const newEntry = {
-    ...entry,
-    entryId: data.nextEntryId++,
-  };
-  data.entries.unshift(newEntry);
-  writeData(data);
-  return newEntry;
+export async function addEntry(entry: Entry): Promise<Entry | void> {
+  try {
+    const req = {
+      method: 'POST',
+      body: JSON.stringify(entry),
+    };
+    const response = await fetch('/api/create', req);
+    const formattedResponse = (await response.json()) as Entry;
+    return formattedResponse;
+  } catch (err) {
+    console.error(err);
+    return;
+  }
 }
 
-export async function updateEntry(entry: Entry): Promise<Entry> {
-  const data = readData();
-  const newEntries = data.entries.map((e) =>
-    e.entryId === entry.entryId ? entry : e
-  );
-  data.entries = newEntries;
-  writeData(data);
-  return entry;
+export async function updateEntry(entry: Entry): Promise<Entry | void> {
+  try {
+    const req = {
+      method: 'PUT',
+      body: JSON.stringify(entry),
+    };
+    const response = await fetch(`/api/update/${entry.entryId}`, req);
+    const formattedResponse = (await response.json()) as Entry;
+    return formattedResponse;
+  } catch (err) {
+    console.error(err);
+    return;
+  }
 }
 
-export async function removeEntry(entryId: number): Promise<void> {
-  const data = readData();
-  const updatedArray = data.entries.filter(
-    (entry) => entry.entryId !== entryId
-  );
-  data.entries = updatedArray;
-  writeData(data);
+export async function removeEntry(entryId: number): Promise<Entry | void> {
+  try {
+    const req = {
+      method: 'DELETE',
+    };
+    const response = await fetch(`/api/delete/${entryId}`, req);
+    const formattedResponse = (await response.json()) as Entry;
+    return formattedResponse;
+  } catch (err) {
+    console.error(err);
+    return;
+  }
 }
