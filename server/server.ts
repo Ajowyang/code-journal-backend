@@ -13,6 +13,12 @@ const db = new pg.Pool({
 
 const app = express();
 
+app.use(express.json());
+
+app.post('/api/create/', async (req, res, next) => {});
+
+app.use(errorMiddleware);
+
 app.listen(process.env.PORT, () => {
   console.log(`express server listening on port ${process.env.PORT}`);
 });
